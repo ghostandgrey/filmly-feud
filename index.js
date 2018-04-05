@@ -19,18 +19,18 @@ function getRandomInt(min, max) {
 
 app.get('/question', async (req, res) => {
   const selection = getRandomInt(0, 2);
+  var question;
   if (selection === 0) {
-    const question = await releaseDateQuestion.generateQuestion();
-    res.send(question);
+    question = await releaseDateQuestion.generateQuestion();
   }
   else if (selection === 1) {
-    const question = await earliestReleaseDateQuestion.generateQuestion();
-    res.send(question);
+    question = await earliestReleaseDateQuestion.generateQuestion();
   }
   else if (selection === 2) {
-    const question = await latestReleaseDateQuestion.generateQuestion();
-    res.send(question);
+    question = await latestReleaseDateQuestion.generateQuestion();
   }
+  question.options.sort((a, b) => 0.5 - Math.random());
+  res.send(question);
 });
 
 const port = 3000;
