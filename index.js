@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const releaseDateQuestion = require('./questions/movie-release-date');
 const earliestReleaseDateQuestion = require('./questions/earliest-release-date');
 const latestReleaseDateQuestion = require('./questions/latest-release-date');
+const genreQuestion = require('./questions/genre');
+const Movie = require('./models/movie');
 
 mongoose.connect('mongodb://192.168.30.193:27017/imdb');
 const db = mongoose.connection;
@@ -29,8 +31,32 @@ app.get('/question', async (req, res) => {
   else if (selection === 2) {
     question = await latestReleaseDateQuestion.generateQuestion();
   }
+  else if (selection === 3) {
+    question = await genreQuestion.generateQuestion();
+  }
   question.options.sort((a, b) => 0.5 - Math.random());
+
   res.send(question);
+});
+
+app.get('/genres', async (req, res) => {
+
+  var genres = new Set();
+
+  const genresAsStrings = await Movie.find({titleType: 'movie'});
+  genresAsStrings.forEach((movie) => {
+    const movieGenres = movie.genres.split(',');
+    movieGenres.forEach((genre) => {
+      genres.add(genre);
+    });
+  });
+
+  var finalGenres = [];
+  genres.forEach((gen) => {
+    finalGenres.push(gen);
+  });
+  finalGenres.sort();
+  res.send(finalGenres);
 });
 
 const port = 3000;
