@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const releaseDateQuestion = require('./questions/movie-release-date');
 const earliestReleaseDateQuestion = require('./questions/earliest-release-date');
+const latestReleaseDateQuestion = require('./questions/latest-release-date');
 
 mongoose.connect('mongodb://192.168.30.193:27017/imdb');
 const db = mongoose.connection;
@@ -17,13 +18,17 @@ function getRandomInt(min, max) {
 }
 
 app.get('/question', async (req, res) => {
-  const selection = getRandomInt(0, 1);
+  const selection = getRandomInt(0, 2);
   if (selection === 0) {
     const question = await releaseDateQuestion.generateQuestion();
     res.send(question);
   }
   else if (selection === 1) {
     const question = await earliestReleaseDateQuestion.generateQuestion();
+    res.send(question);
+  }
+  else if (selection === 2) {
+    const question = await latestReleaseDateQuestion.generateQuestion();
     res.send(question);
   }
 });
