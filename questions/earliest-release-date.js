@@ -11,24 +11,38 @@ const MIN_YEAR = 1970;
 const MAX_YEAR = 2017;
 
 const generateQuestion = async () => {
-  console.log('Generating specific release date question');
-  const releaseYear = getRandomInt(MIN_YEAR, MAX_YEAR);
-  const answer = await getRandomMovieFromYear(releaseYear);
-
+  console.log('Generating earliest release date question');
+  var releaseYears = {};
   var options = [];
-  options.push(transformMovie(answer, true));
-  for (var i = 0; i < 3; i++) {
-    var otherReleaseYear = getRandomInt(MIN_YEAR, MAX_YEAR);
-    if (otherReleaseYear === releaseYear) {
-      otherReleaseYear--;
+  for (var i = 0; i < 4; i++) {
+    var differentYear = false;
+    var releaseYear;
+    while (!differentYear) {
+      releaseYear = getRandomInt(MIN_YEAR, MAX_YEAR);
+      if (!releaseYears.hasOwnProperty(releaseYear.toString())) {
+        releaseYears[releaseYear.toString()] = {};
+        differentYear = true;
+      }
     }
-    var wrongAnswer = await getRandomMovieFromYear(otherReleaseYear);
-    options.push(transformMovie(wrongAnswer, false));
+    const option = await getRandomMovieFromYear(releaseYear);
+    options.push(transformMovie(option, false));
   }
+
+  const years = options.map((movie) => Number(movie.year));
+  const earliestYear = years.reduce(getMin);
+  const correctAnswer = options.find((movie) => movie.year == earliestYear);
+  correctAnswer.answer = true;
   return {
-    question: 'Which of these movies was released in ' + releaseYear + '?',
+    question: 'Which of these movies was released first?',
     options: options
   }
+}
+
+const getMin = (min, cur) => {
+  if (min < cur) {
+    return min;
+  }
+  return cur;
 }
 
 const getRandomMovieFromYear = async (releaseYear) => {
