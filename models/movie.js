@@ -6,6 +6,7 @@ module.exports = mongoose.model(
     tconst: String,
     primaryTitle: String,
     titleType: String,
-    startYear: Number
+    startYear: Number,
+    genres: String
   })
 );
