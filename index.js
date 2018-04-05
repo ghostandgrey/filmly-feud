@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const movieQuestion = require('./questions/movie-question')
+const releaseDateQuestion = require('./questions/movie-release-date')
 
 mongoose.connect('mongodb://192.168.30.193:27017/imdb');
 const db = mongoose.connection;
@@ -14,7 +14,7 @@ const app = express();
 app.get('/', (req, res) => res.send('Hello world'));
 
 app.get('/question', async (req, res) => {
-  const question = await movieQuestion.generateQuestion();
+  const question = await releaseDateQuestion.generateQuestion();
   res.send(question);
 });
 
